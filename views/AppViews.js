@@ -1,9 +1,8 @@
 import React from 'react';
-import {WRAPPER, CONNECT_WALLET, FUND_ACCOUNT, CHOOSE_ROLE} from '../other/Constants';
 
 const AppViews = {};
 
-AppViews.WRAPPER = class extends React.Component {
+AppViews.Wrapper = class extends React.Component {
   render() {
     const {content} = this.props
     return (
@@ -17,7 +16,7 @@ AppViews.WRAPPER = class extends React.Component {
   }
 }
 
-AppViews.CONNECT_WALLET = class extends React.Component {
+AppViews.ConnectWallet = class extends React.Component {
   render() {
     return (
       <div>
@@ -28,7 +27,7 @@ AppViews.CONNECT_WALLET = class extends React.Component {
   }
 }
 
-AppViews.FUND_ACCOUNT = class extends React.Component {
+AppViews.FundAccount = class extends React.Component {
   render() {
     return (
       <div>
@@ -52,7 +51,7 @@ AppViews.FUND_ACCOUNT = class extends React.Component {
   }
 }
 
-AppViews.CHOOSE_ROLE = class extends React.Component {
+AppViews.ChooseRole = class extends React.Component {
   render() {
     const {parent} = this.props;
     return (
