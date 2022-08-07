@@ -1,0 +1,55 @@
+import { loadStdlib } from '@reach-sh/stdlib';
+import * as backend from './build/index.main.mjs';
+const stdlib = loadStdlib();
+
+const startingBalance = stdlib.parseCurrency(100);
+const accAlice = await stdlib.newTestAccount(startingBalance);
+const accBob = await stdlib.newTestAccount(startingBalance);
+
+const fmt = (x) => stdlib.formatCurrency(x, 4);
+const getBalance = async (who) => fmt(await stdlib.balanceOf(who));
+const beforeAlice = await getBalance(accAlice);
+const beforeBob = await getBalance(accBob);
+
+const ctcAlice = accAlice.contract(backend);
+const ctcBob = accBob.contract(backend, ctcAlice.getInfo());
+
+const RANGE_LOWER = 11;
+const RANGE_UPPER = 12;
+const OUTCOME = ['Bob Wins', 'Draw', 'Alice Wins'];
+const Player = (who, seed) => ({
+  ...stdlib.hasRandom,
+  getGuess: () => {
+    const guess = Math.floor(Math.random() * (RANGE_UPPER - RANGE_LOWER + 1)) + RANGE_LOWER;
+    console.log(`${who} guessed ${guess}`)
+    return guess
+  },
+  setOutcome: (outcome, luckyNumber) => {
+    console.log(`${who} saw the outcome ${OUTCOME[outcome]} , luckyNumber being ${luckyNumber}`)
+  },
+  seed: Math.floor(Math.random() * (RANGE_UPPER - RANGE_LOWER + 1)) + RANGE_LOWER,
+  informTimeout: () => {
+    console.log(`${who} observed a timeout`);
+  }
+})
+
+await Promise.all([
+  ctcAlice.p.Alice({
+    ...Player('Alice', 18),
+    lowerLimit: RANGE_LOWER,
+    upperLimit : RANGE_UPPER,
+    wager: stdlib.parseCurrency(10),
+    deadline: 100
+  }),
+  ctcBob.p.Bob({
+    ...Player('Bob', 12),
+    acceptTerms: (amt, lowerLimit, upperLimit) => {
+      console.log(`Bob accepts the range [${lowerLimit} - ${upperLimit}](inclusive) and the wager of ${fmt(amt)}`);
+    }
+  }),
+]);
+const afterAlice = await getBalance(accAlice);
+const afterBob = await getBalance(accBob);
+
+console.log(`Alice went from ${beforeAlice} to ${afterAlice}.`);
+console.log(`Bob went from ${beforeBob} to ${afterBob}.`);
