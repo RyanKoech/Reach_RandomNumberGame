@@ -127,4 +127,13 @@ class Attacher extends Player {
   render() { return renderView(this, AttacherViews); }
 }
 
-renderDOM(<App/>);
+class TestApp extends React.Component {
+  render() {
+    const content = <AppViews.FundAccount {...{bal: 12, standardUnit: 'ALGO', defaultFundAmt: 10, parent : this}}/>
+    return (
+      <AppViews.Wrapper {...{content}}/>
+    )
+  }
+}
+
+renderDOM(<TestApp/>);
