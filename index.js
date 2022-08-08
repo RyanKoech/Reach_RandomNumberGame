@@ -6,7 +6,7 @@ import {renderDOM, renderView} from './views/Render';
 import './index.css';
 import * as backend from './build/index.main.mjs';
 import { loadStdlib } from '@reach-sh/stdlib';
-import { AWAIT_ATTACHER, AWAIT_RESULTS, CHOOSE_ROLE, CONNECT_WALLET , DEPLOY, DEPLOYING, DONE, FUND_ACCOUNT, GET_GUESS, GET_SEED, SET_TERMS, TIMEOUT, WRAPPER } from './other/Constants';
+import { ACCEPT_TERMS, ATTACH, ATTACHING, AWAIT_ATTACHER, AWAIT_RESULTS, AWAIT_TURN, CHOOSE_ROLE, CONNECT_WALLET , DEPLOY, DEPLOYING, DONE, FUND_ACCOUNT, GET_GUESS, GET_SEED, SET_TERMS, TIMEOUT, WRAPPER } from './other/Constants';
 const reach = loadStdlib(process.env);
 
 
@@ -31,14 +31,14 @@ class App extends React.Component {
     } else {
       this.setState({view: CHOOSE_ROLE});
     }
-    // this.interval = setInterval(async () => this.updateBalance(), 3000);
+    this.interval = setInterval(async () => this.updateBalance(), 3000);
   }
   async fundAccount(fundAmount) {
     await reach.fundFromFaucet(this.state.acc, reach.parseCurrency(fundAmount));
     this.setState({view: CHOOSE_ROLE});
   }
   async skipFundAccount() { this.setState({view: CHOOSE_ROLE}); }
-  selectAttacher() { this.setState({view: WRAPPER, ContentView: null}); }
+  selectAttacher() { this.setState({view: WRAPPER, ContentView: Attacher}); }
   selectDeployer() { this.setState({view: WRAPPER, ContentView: Deployer}); }
   async updateBalance(acc) {
     const balAtomic = await reach.balanceOf(this.state.acc);
@@ -56,8 +56,9 @@ class Player extends React.Component {
   async getSeed() { // Fun([], UInt)
     console.log("This is called");
     const seed = await new Promise(resolveSeedP => {
-      this.setState({ playable: true, resolveSeedP})
+      this.setState({playable: true, resolveSeedP})
     });
+    this.setState({view: AWAIT_TURN});
     return seed;
   }
   async getGuess() { // Fun([], UInt)
@@ -67,10 +68,15 @@ class Player extends React.Component {
     this.setState({view: AWAIT_RESULTS, guess});
     return guess;
   }
-  seeOutcome(i) { this.setState({view: DONE, outcome: intToOutcome[i]}); }
+  seeOutcome(i, atomicLuckyNumber) {
+    this.setState({
+      view: DONE, 
+      outcome: intToOutcome[i], luckyNumber : reach.bigNumberToNumber(atomicLuckyNumber)
+    }); 
+  }
   informTimeout() { this.setState({view: TIMEOUT}); }
   playGuess(guess) { this.state.resolveGuessP(guess); }
-  provideSeed(seed) { console.log({seed}); this.state.resolveSeedP(seed); }
+  provideSeed(seed) { this.state.resolveSeedP(seed); }
   startGame() {this.setState({view: GET_SEED})}
 }
 
@@ -85,8 +91,8 @@ class Deployer extends Player {
     this.setState({view: DEPLOYING, ctc});
     this.wager = reach.parseCurrency(this.state.wager); // UInt
     this.deadline = {ETH: 10, ALGO: 100, CFX: 1000}[reach.connector]; // UInt
-    this.lowerLimit = this.state.lowerLimit; // UInt
-    this.upperLimit = this.state.upperLimit; // UInt
+    this.lowerLimit = (this.state.lowerLimit); // UInt
+    this.upperLimit = (this.state.upperLimit); // UInt
     backend.Alice(ctc, this);
     console.log({ctc})
     const ctcInfoStr = JSON.stringify(await ctc.getInfo(), null, 2);
@@ -94,6 +100,31 @@ class Deployer extends Player {
     this.setState({view: AWAIT_ATTACHER, ctcInfoStr});
   }
   render() { return renderView(this, DeployerViews); }
+}
+
+class Attacher extends Player {
+  constructor(props) {
+    super(props);
+    this.state = {view: ATTACH};
+  }
+  attach(ctcInfoStr) {
+    const ctc = this.props.acc.contract(backend, JSON.parse(ctcInfoStr));
+    this.setState({view: ATTACHING});
+    backend.Bob(ctc, this);
+  }
+  async acceptTerms(wagerAtomic, atomicLowerLimit, atomicUpperLimit) { // Fun([UInt], Null)
+    const wager = reach.formatCurrency(wagerAtomic, 4);
+    const lowerLimit = reach.bigNumberToNumber(atomicLowerLimit);
+    const upperLimit = reach.bigNumberToNumber(atomicUpperLimit);
+    return await new Promise(resolveAcceptedP => {
+      this.setState({view: ACCEPT_TERMS, wager, lowerLimit, upperLimit, resolveAcceptedP});
+    });
+  }
+  termsAccepted() {
+    this.state.resolveAcceptedP();
+    this.startGame();
+  }
+  render() { return renderView(this, AttacherViews); }
 }
 
 renderDOM(<App/>);
