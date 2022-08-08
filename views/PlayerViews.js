@@ -27,7 +27,7 @@ PlayerViews.GetSeed = class extends React.Component {
     const seed = (this.state || {}).seed || 10
     return (
       <div>
-        <input type='number' onChange={e => {this.setState({seed : this.setState({seed: e.currentTarget.value})})}}/>
+        <input type='number' onChange={e => {this.setState({seed : e.currentTarget.value})}}/>
         <button
           disabled={!playable}
           onClick={() => {parent.provideSeed(seed);}}
@@ -49,11 +49,12 @@ PlayerViews.AwaitResults = class extends React.Component {
 
 PlayerViews.Done = class extends React.Component {
   render() {
-    const {outcome} = this.props;
+    const {outcome, luckyNumber} = this.props;
     return (
       <div>
         Thank you for playing. The outcome of this game was:
         <br />{outcome || 'Unknown'}
+        <br/> The luckyNumber was {luckyNumber}
       </div>
     );
   }
@@ -64,6 +65,16 @@ PlayerViews.Timeout = class extends React.Component {
     return (
       <div>
         There's been a timeout. (Someone took too long.)
+      </div>
+    );
+  }
+}
+
+PlayerViews.AwaitTurn = class extends React.Component {
+  render() {
+    return (
+      <div>
+        Waiting for the other player...
       </div>
     );
   }
