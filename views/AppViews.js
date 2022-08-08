@@ -4,11 +4,12 @@ const AppViews = {};
 
 AppViews.Wrapper = class extends React.Component {
   render() {
-    const {content} = this.props
+    const {content, bal, standardUnit} = this.props
     return (
       <div className="App">
       <header className="App-header" id="root">
         <h1>Guess the Lucky Number</h1>
+        <div>Balance: {bal} {standardUnit}</div>
         {content}
       </header>
     </div>
@@ -29,23 +30,25 @@ AppViews.ConnectWallet = class extends React.Component {
 
 AppViews.FundAccount = class extends React.Component {
   render() {
+    const {bal, standardUnit, defaultFundAmt, parent} = this.props;
+    const amt = (this.state || {}).amt || defaultFundAmt;
     return (
       <div>
         <h2>Fund account</h2>
         <br />
-        Balance: 0
+        Balance: {bal} {standardUnit}
         <hr />
-        Would you like to fund your account with additional ALGO?
+        Would you like to fund your account with additional {standardUnit}?
         <br />
         (This only works on certain devnets)
         <br />
         <input
           type='number'
-          placeholder= '10'
-          onChange={(e) => {}}
+          placeholder= {defaultFundAmt}
+          onChange={(e) => {this.setState({amt: e.currentTarget.value})}}
         />
-        <button onClick={() => {}}>Fund Account</button>
-        <button onClick={() => {}}>Skip</button>
+        <button onClick={() => {parent.fundAccount(amt)}}>Fund Account</button>
+        <button onClick={() => {parent.skipFundAccount()}}>Skip</button>
       </div>
     );
   }
@@ -60,13 +63,13 @@ AppViews.ChooseRole = class extends React.Component {
         <br />
         <p>
           <button
-            onClick={() => {}}
+            onClick={() => {parent.selectDeployer()}}
           >Deployer</button>
           <br /> Set the wager, deploy the contract.
         </p>
         <p>
           <button
-            onClick={() => {}}
+            onClick={() => {parent.selectAttacher()}}
           >Attacher</button>
           <br /> Attach to the Deployer's contract.
         </p>
