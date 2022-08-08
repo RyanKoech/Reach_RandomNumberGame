@@ -6,7 +6,7 @@ const [ isGuess, NUM_1, NUM_2, NUM_3 ] = makeEnum(3);
 const Player = {
   ...hasRandom,
   getGuess: Fun([], UInt),
-  setOutcome: Fun([UInt, UInt], Null),
+  seeOutcome: Fun([UInt, UInt], Null),
   getSeed: Fun([], UInt),
   informTimeout: Fun([], Null)
 };
@@ -126,13 +126,19 @@ export const main = Reach.App(() => {
 
   Bob.only(() => {
     interact.acceptTerms(wager, lowerLimit, upperLimit);
+  });
+  Bob.publish()
+    .pay(wager)
+    .timeout(relativeTime(deadline), () => closeTo(Alice, informTimeout));
+  commit();
+
+  Bob.only(() => {
     const _seedBob = interact.getSeed();
     const [_commitSeedBob, _saltSeedBob] = makeCommitment(interact, _seedBob);
     const commitSeedBob = declassify(_commitSeedBob);
   });
   Bob.publish(commitSeedBob)
-    .pay(wager)
-    .timeout(relativeTime(deadline), () => closeTo(Alice, informTimeout));
+    .timeout(relativeTime(deadline), () => closeToAll());
   commit();
 
   unknowable(Alice, Bob(_seedBob, _saltSeedBob));
@@ -176,6 +182,6 @@ export const main = Reach.App(() => {
   commit();
 
   each([Alice, Bob], () => {
-    interact.setOutcome(outcome, luckyNumber);
+    interact.seeOutcome(outcome, luckyNumber);
   })
 });
