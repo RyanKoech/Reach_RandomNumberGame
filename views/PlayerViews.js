@@ -16,6 +16,17 @@ PlayerViews.GetGuess = class extends React.Component {
   }
 }
 
+PlayerViews.GetSeed = class extends React.Component {
+  render() {
+    return (
+      <div>
+        <input type='number'/>
+        <button>Submit Seed</button>
+      </div>
+    );
+  }
+}
+
 PlayerViews.AwaitResults = class extends React.Component {
   render() {
     return (
