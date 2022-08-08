@@ -17,19 +17,21 @@ AttacherViews.Wrapper = class extends React.Component {
 
 AttacherViews.Attach = class extends React.Component {
   render() {
+    const {parent} = this.props;
+    const {ctcInfoStr} = this.state || {};
     return (
       <div>
         Please paste the contract info to attach to:
         <br />
         <textarea spellCheck="false"
           className='ContractInfo'
-          onChange={(e) => {}}
+          onChange={(e) => this.setState({ctcInfoStr: e.currentTarget.value})}
           placeholder='{}'
         />
         <br />
         <button
-          disabled={''}
-          onClick={() => {}}
+          disabled={!ctcInfoStr}
+          onClick={() => parent.attach(ctcInfoStr)}
         >Attach</button>
       </div>
     );
@@ -48,26 +50,21 @@ AttacherViews.Attaching = class extends React.Component {
 
 AttacherViews.AcceptTerms = class extends React.Component {
   render() {
+    const {wager, lowerLimit, upperLimit,standardUnit, parent} = this.props;
+    const {disabled} = this.state || {};
     return (
       <div>
         The terms of the game are:
-        <br /> Range: 10 - 30 (limits inclusive)
-        <br /> Wager: 30 ALGO
+        <br /> Range: {lowerLimit} - {upperLimit} (limits inclusive)
+        <br /> Wager: {wager} {standardUnit}
         <br />
         <button
           disabled={disabled}
-          onClick={() => {}}
+          onClick={() => {
+            this.setState({disabled: true});
+            parent.termsAccepted()
+          }}
         >Accept terms and pay wager</button>
-      </div>
-    );
-  }
-}
-
-AttacherViews.WaitingForTurn = class extends React.Component {
-  render() {
-    return (
-      <div>
-        Waiting for the other player...
       </div>
     );
   }
