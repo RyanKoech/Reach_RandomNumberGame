@@ -109,12 +109,17 @@ export const main = Reach.App(() => {
     const lowerLimit = declassify(interact.lowerLimit);
     const upperLimit = declassify(interact.upperLimit);
     const deadline = declassify(interact.deadline);
+  });
+  Alice.publish(wager, lowerLimit, upperLimit, deadline)
+    .pay(wager);
+  commit();
+
+  Alice.only(() => {
     const _seedAlice = interact.getSeed();
     const [_commitSeedAlice, _saltSeedAlice] = makeCommitment(interact, _seedAlice);
     const commitSeedAlice = declassify(_commitSeedAlice);
   });
-  Alice.publish(wager, lowerLimit, upperLimit, deadline, commitSeedAlice)
-    .pay(wager);
+  Alice.publish(commitSeedAlice)
   commit();
 
   unknowable(Bob, Alice(_seedAlice, _seedAlice))
