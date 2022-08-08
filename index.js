@@ -6,7 +6,7 @@ import {renderDOM, renderView} from './views/Render';
 import './index.css';
 import * as backend from './build/index.main.mjs';
 import { loadStdlib } from '@reach-sh/stdlib';
-import { CHOOSE_ROLE, CONNECT_WALLET , FUND_ACCOUNT, WRAPPER } from './other/Constants';
+import { AWAIT_RESULTS, CHOOSE_ROLE, CONNECT_WALLET , DONE, FUND_ACCOUNT, GET_GUESS, GET_SEED, TIMEOUT, WRAPPER } from './other/Constants';
 const reach = loadStdlib(process.env);
 
 
@@ -48,6 +48,27 @@ class App extends React.Component {
     }
   }
   render() { return renderView(this, AppViews); }
+}
+
+
+class Player extends React.Component {
+  random() { return reach.hasRandom.random(); }
+  async getSeed() { // Fun([], UInt)
+    const seed = await new Promise(resolveSeedP => {
+      this.setState({view: GET_SEED, playable: true, resolveSeedP})
+    });
+  }
+  async getGuess() { // Fun([], UInt)
+    const guess = await new Promise(resolveGuessP => {
+      this.setState({view: GET_GUESS, playable: true, resolveGuessP});
+    });
+    this.setState({view: AWAIT_RESULTS, guess});
+    return guess;
+  }
+  seeOutcome(i) { this.setState({view: DONE, outcome: intToOutcome[i]}); }
+  informTimeout() { this.setState({view: TIMEOUT}); }
+  playGuess(hand) { this.state.resolveGuessP(hand); }
+  provideSeed(seed) { this.state.resolveSeedP(seed); }
 }
 
 
