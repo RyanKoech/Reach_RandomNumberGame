@@ -3,6 +3,8 @@ import PlayerViews from './PlayerViews';
 
 const DeployerViews = {...PlayerViews};
 
+const sleep = (milliseconds) => new Promise(resolve => setTimeout(resolve, milliseconds));
+
 DeployerViews.Wrapper = class extends React.Component {
   render() {
     const {content} = this.props;
