@@ -7,10 +7,15 @@ const PlayerViews = {};
 
 PlayerViews.GetGuess = class extends React.Component {
   render() {
+    const {parent, playable} = this.props;
+    const guess = (this.state || {}).guess || 10
     return (
       <div>
-        <input type='number'/>
-        <button>Submit Guess</button>
+        <input type='number' onChange={(e) => {this.setState({guess: e.currentTarget.value})}}/>
+        <button
+          disabled={!playable}
+          onClick={() => parent.playGuess(guess)}
+        >Submit Guess</button>
       </div>
     );
   }
@@ -18,10 +23,15 @@ PlayerViews.GetGuess = class extends React.Component {
 
 PlayerViews.GetSeed = class extends React.Component {
   render() {
+    const {parent, playable} = this.props
+    const seed = (this.state || {}).seed || 10
     return (
       <div>
-        <input type='number'/>
-        <button>Submit Seed</button>
+        <input type='number' onChange={e => {this.setState({seed : this.setState({seed: e.currentTarget.value})})}}/>
+        <button
+          disabled={!playable}
+          onClick={() => {parent.provideSeed(seed);}}
+        >Submit Seed</button>
       </div>
     );
   }
@@ -39,10 +49,11 @@ PlayerViews.AwaitResults = class extends React.Component {
 
 PlayerViews.Done = class extends React.Component {
   render() {
+    const {outcome} = this.props;
     return (
       <div>
         Thank you for playing. The outcome of this game was:
-        <br />Outcome
+        <br />{outcome || 'Unknown'}
       </div>
     );
   }
