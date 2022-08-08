@@ -14,8 +14,8 @@ const beforeBob = await getBalance(accBob);
 const ctcAlice = accAlice.contract(backend);
 const ctcBob = accBob.contract(backend, ctcAlice.getInfo());
 
-const RANGE_LOWER = 11;
-const RANGE_UPPER = 12;
+const RANGE_LOWER = 10;
+const RANGE_UPPER = 20;
 const OUTCOME = ['Bob Wins', 'Draw', 'Alice Wins'];
 const Player = (who, seed) => ({
   ...stdlib.hasRandom,
@@ -24,10 +24,14 @@ const Player = (who, seed) => ({
     console.log(`${who} guessed ${guess}`)
     return guess
   },
-  setOutcome: (outcome, luckyNumber) => {
+  seeOutcome: (outcome, luckyNumber) => {
     console.log(`${who} saw the outcome ${OUTCOME[outcome]} , luckyNumber being ${luckyNumber}`)
   },
-  seed: Math.floor(Math.random() * (RANGE_UPPER - RANGE_LOWER + 1)) + RANGE_LOWER,
+  getSeed: () => {
+    const seed = Math.floor(Math.random() * (RANGE_UPPER - RANGE_LOWER + 1)) + RANGE_LOWER
+    console.log(`${who} seeded ${seed}`)
+    return seed;
+  },
   informTimeout: () => {
     console.log(`${who} observed a timeout`);
   }
