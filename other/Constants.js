@@ -1,5 +1,9 @@
-export const AWAIT_RESULTS = "AwaitResults";
+export const ACCEPT_TERMS = "AcceptTerms";
+export const ATTACH = "Attach";
+export const ATTACHING = "Attaching";
 export const AWAIT_ATTACHER = "AwaitingAttacher";
+export const AWAIT_RESULTS = "AwaitResults";
+export const AWAIT_TURN = "AwaitTurn";
 export const CHOOSE_ROLE = "ChooseRole";
 export const CONNECT_WALLET = "ConnectWallet";
 export const DEPLOY = "Deploy";
