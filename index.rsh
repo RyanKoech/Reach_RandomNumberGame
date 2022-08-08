@@ -7,7 +7,7 @@ const Player = {
   ...hasRandom,
   getGuess: Fun([], UInt),
   setOutcome: Fun([UInt, UInt], Null),
-  seed: UInt,
+  getSeed: Fun([], UInt),
   informTimeout: Fun([], Null)
 };
 
@@ -109,7 +109,7 @@ export const main = Reach.App(() => {
     const lowerLimit = declassify(interact.lowerLimit);
     const upperLimit = declassify(interact.upperLimit);
     const deadline = declassify(interact.deadline);
-    const _seedAlice = interact.seed;
+    const _seedAlice = interact.getSeed();
     const [_commitSeedAlice, _saltSeedAlice] = makeCommitment(interact, _seedAlice);
     const commitSeedAlice = declassify(_commitSeedAlice);
   });
@@ -121,7 +121,7 @@ export const main = Reach.App(() => {
 
   Bob.only(() => {
     interact.acceptTerms(wager, lowerLimit, upperLimit);
-    const _seedBob = interact.seed;
+    const _seedBob = interact.getSeed();
     const [_commitSeedBob, _saltSeedBob] = makeCommitment(interact, _seedBob);
     const commitSeedBob = declassify(_commitSeedBob);
   });
