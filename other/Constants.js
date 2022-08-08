@@ -1,9 +1,13 @@
 export const AWAIT_RESULTS = "AwaitResults";
+export const AWAIT_ATTACHER = "AwaitingAttacher";
 export const CHOOSE_ROLE = "ChooseRole";
 export const CONNECT_WALLET = "ConnectWallet";
+export const DEPLOY = "Deploy";
+export const DEPLOYING = "Deploying";
 export const DONE = "Done";
 export const FUND_ACCOUNT = "FundAccount";
 export const GET_GUESS ='GetGuess';
 export const GET_SEED = 'GetSeed';
+export const SET_TERMS = 'SetGameTerms';
 export const TIMEOUT = "Timeout";
 export const WRAPPER = "Wrapper";
