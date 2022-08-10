@@ -1,4 +1,5 @@
 import React from 'react';
+import Navbar from './components/Navbar';
 
 const AppViews = {};
 
@@ -6,8 +7,9 @@ AppViews.Wrapper = class extends React.Component {
   render() {
     const {content, bal, standardUnit} = this.props
     return (
-      <div className="App">
+      <div className="App bg-blue">
       <header className="App-header" id="root">
+        <Navbar balance={bal} standardUnit={standardUnit}/>
         <h1>Guess the Lucky Number</h1>
         <div>Balance: {bal} {standardUnit}</div>
         {content}
