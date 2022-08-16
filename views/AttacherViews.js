@@ -29,7 +29,7 @@ AttacherViews.Attach = class extends React.Component {
           placeholder='{}'
         />
         <br />
-        <button
+        <button 
           disabled={!ctcInfoStr}
           onClick={() => parent.attach(ctcInfoStr)}
         >Attach</button>

@@ -1,5 +1,6 @@
 import React from 'react';
 import Navbar from './components/Navbar';
+// import UilReact from '@iconscout/react-unicons/icons/uil-react'
 
 const AppViews = {};
 
@@ -7,11 +8,13 @@ AppViews.Wrapper = class extends React.Component {
   render() {
     const {content, bal, standardUnit} = this.props
     return (
-      <div className="App bg-blue">
+    <div className='body'>
       <header className="App-header" id="root">
         <Navbar balance={bal} standardUnit={standardUnit}/>
-        <h1>Guess the Lucky Number</h1>
-        <div>Balance: {bal} {standardUnit}</div>
+        <div className='nav'>
+        <h1 className='h1 nav__logo'>Guess The Lucky Number</h1>
+        <div className="h1">Balance: {bal} {standardUnit}</div>
+        </div>
         {content}
       </header>
     </div>
@@ -22,7 +25,7 @@ AppViews.Wrapper = class extends React.Component {
 AppViews.ConnectWallet = class extends React.Component {
   render() {
     return (
-      <div>
+      <div className="body">
         Please wait while we connect to your account.
         If this takes more than a few seconds, there may be something wrong.
       </div>
@@ -36,10 +39,13 @@ AppViews.FundAccount = class extends React.Component {
     const amt = (this.state || {}).amt || defaultFundAmt;
     return (
       <div>
-        <h2>Fund account</h2>
+        {/* <h2>Fund account</h2> */}
         <br />
-        Balance: {bal} {standardUnit}
-        <hr />
+        <div className="balance__title">
+        <p className='h1'>Your balance is</p>
+        <h3 className="balance__title">{bal} {standardUnit}</h3>
+        </div>
+        {/* <hr /> */}
         Would you like to fund your account with additional {standardUnit}?
         <br />
         (This only works on certain devnets)
@@ -49,8 +55,8 @@ AppViews.FundAccount = class extends React.Component {
           placeholder= {defaultFundAmt}
           onChange={(e) => {this.setState({amt: e.currentTarget.value})}}
         />
-        <button onClick={() => {parent.fundAccount(amt)}}>Fund Account</button>
-        <button onClick={() => {parent.skipFundAccount()}}>Skip</button>
+        <button className='button' onClick={() => {parent.fundAccount(amt)}}>Fund Account</button>
+        <button className='button' onClick={() => {parent.skipFundAccount()}}>Skip</button>
       </div>
     );
   }
